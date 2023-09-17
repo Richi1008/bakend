@@ -1,0 +1,40 @@
+// Importa las bibliotecas necesarias
+const express = require('express');
+const ProductManager = require('./ProductManager'); // Asegúrate de proporcionar la ruta correcta al archivo ProductManager
+
+// Crea una instancia de Express
+const app = express();
+const port = 3000; // Puedes cambiar el puerto según tu preferencia
+
+// Ruta para obtener todos los productos con un límite opcional
+app.get('/products', (req, res) => {
+  const { limit } = req.query;
+
+  // Lee todos los productos o limita el resultado según el valor de 'limit'
+  const products = ProductManager.getAllProducts(limit);
+
+  // Envía los productos como respuesta en formato JSON
+  res.json(products);
+});
+
+// Ruta para obtener un producto por su ID
+app.get('/products/:pid', (req, res) => {
+  const { pid } = req.params;
+
+  // Busca el producto por su ID
+  const product = ProductManager.getProductById(pid);
+
+  // Si el producto no se encuentra, devuelve un error 404
+  if (!product) {
+    res.status(404).json({ error: 'Producto no encontrado' });
+    return;
+  }
+
+  // Envía el producto encontrado como respuesta en formato JSON
+  res.json(product);
+});
+
+// Inicia el servidor
+app.listen(port, () => {
+  console.log(`Servidor Express en ejecución en http://localhost:${port}`);
+});
